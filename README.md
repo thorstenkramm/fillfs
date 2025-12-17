@@ -30,7 +30,9 @@ How many files and how many folders will this command create?
 
 Based on the described behavior (recursive into each folder at each depth):
 
-### Example: `--folders 10 --files-per-folder 100 --depths 5`
+### Example
+
+`--folders 10 --files-per-folder 100 --depths 5`
 
 | Depth | Folders     | Files |
 |-------|-------------|-------|
