@@ -23,8 +23,8 @@
 - Always run all tests after a task is completed.
 - Make sure the test coverage doesn't fall below the required threshold of 75% after a task is completed.
 
-
 ## Target OS
+
 fillfs is intented to be used on Linux and macOS. Windows is out of scope.
 
 ## Other rules
