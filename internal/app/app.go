@@ -99,6 +99,13 @@ func Run(ctx context.Context, cfg options.Config) error {
 	return nil
 }
 
+func clampToUint64[T ~int | ~int32 | ~int64 | ~uint | ~uint32 | ~uint64](v T) uint64 {
+	if v < 0 {
+		return 0
+	}
+	return uint64(v)
+}
+
 func prepareDestination(cfg options.Config) error {
 	info, err := os.Stat(cfg.Dest)
 	if err != nil {
@@ -218,13 +225,13 @@ func ensureDisk(path string, required int64) error {
 		return fmt.Errorf("statfs: %w", err)
 	}
 
-	blocks := stat.Bavail
-	blockSize := uint64(stat.Bsize)
+	blocks64 := clampToUint64(stat.Bavail)
+	blockSize64 := clampToUint64(stat.Bsize)
 	var available uint64
-	if blockSize > 0 && blocks > math.MaxUint64/blockSize {
+	if blockSize64 > 0 && blocks64 > math.MaxUint64/blockSize64 {
 		available = math.MaxUint64
 	} else {
-		available = blocks * blockSize
+		available = blocks64 * blockSize64
 	}
 	availableSigned := int64(math.Min(float64(available), float64(math.MaxInt64)))
 
