@@ -64,7 +64,9 @@ Where:
 If you invoke `./fillfs` without any arguments, the following default settings will apply:
 
 - `dest`: current directory
-- `cache-dir`: default temporary folder of your operating system, with a fallback to `/tmp`.
+- `cache-dir`: default temporary folder of your operating system (fallback `/tmp`) using hidden subfolder `.fillfs`.
+  A hidden folder `.fillfs` will be created only if cache dir default is used. If you specify
+  a custom folder, seed files go directly there with a subfolder. 
 - `clean-cache`: false
 - `folders`: 2
 - `files-per-folder`: 20
@@ -90,5 +92,30 @@ You can use fillfs directly in your Go project and inside your Go unit tests.
 See the example below:
 
 ```go
-// fill me
+package mytest
+
+import (
+	"context"
+	"testing"
+
+	fillfs "github.com/thorstenkramm/fillfs/internal/app"
+	fillfsOption "github.com/thorstenkramm/fillfs/internal/options"
+)
+
+func TestFillFS(t *testing.T) {
+	cfg := fillfsOption.Config{
+		Dest:           t.TempDir(), // destination directory for generated files
+		CacheDir:       "",          // default: OS temp dir with hidden .fillfs subfolder
+		CleanCache:     false,       // keep cache across runs to speed up repeated tests
+		Folders:        2,           // number of folders per depth
+		FilesPerFolder: 5,           // files to create in each folder
+		Depths:         1,           // recursion depth (floats supported, e.g., 2.5)
+		Yes:            true,        // skip interactive confirmation
+		WipeDest:       true,        // allow deleting existing files in destination
+	}
+
+	if err := fillfs.Run(context.Background(), cfg); err != nil {
+		t.Fatalf("fillfs failed: %v", err)
+	}
+}
 ```
